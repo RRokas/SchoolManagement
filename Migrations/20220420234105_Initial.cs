@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SchoolManagement.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,6 +17,18 @@ namespace SchoolManagement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Departments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lectures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lectures", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,28 +52,33 @@ namespace SchoolManagement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Lectures",
+                name: "DepartmentLecture",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StudentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    DepartmentsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LecturesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Lectures", x => x.Id);
+                    table.PrimaryKey("PK_DepartmentLecture", x => new { x.DepartmentsId, x.LecturesId });
                     table.ForeignKey(
-                        name: "FK_Lectures_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
+                        name: "FK_DepartmentLecture_Departments_DepartmentsId",
+                        column: x => x.DepartmentsId,
+                        principalTable: "Departments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DepartmentLecture_Lectures_LecturesId",
+                        column: x => x.LecturesId,
+                        principalTable: "Lectures",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lectures_StudentId",
-                table: "Lectures",
-                column: "StudentId");
+                name: "IX_DepartmentLecture_LecturesId",
+                table: "DepartmentLecture",
+                column: "LecturesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_AssignedDepartmentId",
@@ -72,10 +89,13 @@ namespace SchoolManagement.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Lectures");
+                name: "DepartmentLecture");
 
             migrationBuilder.DropTable(
                 name: "Students");
+
+            migrationBuilder.DropTable(
+                name: "Lectures");
 
             migrationBuilder.DropTable(
                 name: "Departments");

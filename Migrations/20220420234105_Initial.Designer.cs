@@ -10,8 +10,8 @@ using SchoolManagement;
 namespace SchoolManagement.Migrations
 {
     [DbContext(typeof(SchoolDb))]
-    [Migration("20220420190213_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220420234105_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,21 @@ namespace SchoolManagement.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.16")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("DepartmentLecture", b =>
+                {
+                    b.Property<Guid>("DepartmentsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LecturesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("DepartmentsId", "LecturesId");
+
+                    b.HasIndex("LecturesId");
+
+                    b.ToTable("DepartmentLecture");
+                });
 
             modelBuilder.Entity("SchoolManagement.Models.Department", b =>
                 {
@@ -44,12 +59,7 @@ namespace SchoolManagement.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("StudentId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
 
                     b.ToTable("Lectures");
                 });
@@ -76,11 +86,19 @@ namespace SchoolManagement.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("SchoolManagement.Models.Lecture", b =>
+            modelBuilder.Entity("DepartmentLecture", b =>
                 {
-                    b.HasOne("SchoolManagement.Models.Student", null)
-                        .WithMany("Lectures")
-                        .HasForeignKey("StudentId");
+                    b.HasOne("SchoolManagement.Models.Department", null)
+                        .WithMany()
+                        .HasForeignKey("DepartmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagement.Models.Lecture", null)
+                        .WithMany()
+                        .HasForeignKey("LecturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SchoolManagement.Models.Student", b =>
@@ -90,11 +108,6 @@ namespace SchoolManagement.Migrations
                         .HasForeignKey("AssignedDepartmentId");
 
                     b.Navigation("AssignedDepartment");
-                });
-
-            modelBuilder.Entity("SchoolManagement.Models.Student", b =>
-                {
-                    b.Navigation("Lectures");
                 });
 #pragma warning restore 612, 618
         }
