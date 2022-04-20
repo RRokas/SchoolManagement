@@ -1,4 +1,5 @@
 ﻿using System;
+using SchoolManagement.ConsoleUI;
 
 namespace SchoolManagement
 {
@@ -6,7 +7,8 @@ namespace SchoolManagement
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var ui = new ConsoleUi();
+            ui.Start();
         }
     }
 }
