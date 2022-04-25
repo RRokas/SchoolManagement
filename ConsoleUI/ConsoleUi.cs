@@ -14,6 +14,9 @@ namespace SchoolManagement.ConsoleUI
             var commandDefinitions = new CommandDefinitions();
             var input = "";
 
+            var helpCommand = commandDefinitions.Commands.Where(c => c.Name == "help").First();
+            helpCommand.Execute();
+
             while (input != "exit")
             {
                 Console.WriteLine("Waiting for command...");

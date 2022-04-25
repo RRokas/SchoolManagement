@@ -22,6 +22,7 @@ namespace SchoolManagement.ConsoleUI
             Commands.Add(ListLecturesByDepartmentId());
             Commands.Add(ListStudents());
             Commands.Add(AddStudent());
+            Commands.Add(AddStudentToLecture());
             Commands.Add(MoveStudent());
             Commands.Add(ListStudentLectures());
             Commands.Add(AddDepartment());
@@ -29,8 +30,6 @@ namespace SchoolManagement.ConsoleUI
             Commands.Add(Clear());
             Commands.Add(Help());
             Commands.Add(Exit());
-
-            Help().Execute();
         }
 
         private Command ExampleCommand()
@@ -132,8 +131,33 @@ namespace SchoolManagement.ConsoleUI
                     }
                     Core.AddLecture(lectureName, depts);
                 });
+        }
 
+        private Command AddStudentToLecture()
+        {
+            return new Command(
+                "addLectureToStudent",
+                "Adds a lecture for a student.",
+                () =>
+                {
+                    PrintAllStudents();
+                    Console.WriteLine("Student ID to add a lecture to:");
+                    var studentGuid = new Guid(Console.ReadLine());
 
+                    Console.WriteLine();
+                    var departmentId = Core.GetStudentDepartment(studentGuid).Id;
+                    var departmentLectures = Core.GetLecturesByDepartmentId(departmentId);
+
+                    Console.WriteLine("Available lectures: ");
+                    foreach (var lecture in departmentLectures)
+                    {
+                        Console.WriteLine(lecture);
+                    }
+
+                    Console.WriteLine("\nLecture ID to add: ");
+                    var chosenLectureGuid = new Guid(Console.ReadLine());
+                    Core.AddStudentToLecture(studentGuid, chosenLectureGuid);
+                });
         }
 
         private Command ListStudents()

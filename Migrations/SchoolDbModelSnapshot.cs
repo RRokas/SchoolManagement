@@ -34,6 +34,21 @@ namespace SchoolManagement.Migrations
                     b.ToTable("DepartmentLecture");
                 });
 
+            modelBuilder.Entity("LectureStudent", b =>
+                {
+                    b.Property<Guid>("LecturesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("LecturesId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("LectureStudent");
+                });
+
             modelBuilder.Entity("SchoolManagement.Models.Department", b =>
                 {
                     b.Property<Guid>("Id")
@@ -99,13 +114,33 @@ namespace SchoolManagement.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LectureStudent", b =>
+                {
+                    b.HasOne("SchoolManagement.Models.Lecture", null)
+                        .WithMany()
+                        .HasForeignKey("LecturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchoolManagement.Models.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SchoolManagement.Models.Student", b =>
                 {
                     b.HasOne("SchoolManagement.Models.Department", "AssignedDepartment")
-                        .WithMany()
+                        .WithMany("Students")
                         .HasForeignKey("AssignedDepartmentId");
 
                     b.Navigation("AssignedDepartment");
+                });
+
+            modelBuilder.Entity("SchoolManagement.Models.Department", b =>
+                {
+                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }
